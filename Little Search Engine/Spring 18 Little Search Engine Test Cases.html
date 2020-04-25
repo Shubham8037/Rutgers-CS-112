@@ -1,0 +1,102 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1"><title>
+CS112 Spring 2018: Programming Assignment 4 - Little Search Engine Test Cases
+</title>
+<style>
+body { font: 14px Trebuchet MS, Verdana, Arial, Helvetica, sans-serif; }
+div.code { background: lightgrey; width: 40%;}
+table { border-collapse: collapse; cellspacing: 0px; margin-left: 10%;}
+th { font: bold 14px Trebuchet MS; border-bottom: 1px solid black; padding: 10px; text-align:left;}
+td { padding: 2px; font: 13px Trebuchet MS; align:left; padding-right: 10px; }
+td.pts { text-align: right; padding-right: 20px; vertical-align: top;}
+tt { color: blue; font-weight: bold;}
+a, a:visited { color: blue; }
+pre { color: blue; }
+</style>
+	</head><body>
+<center>
+		<h2>Programming Assignment 4 - Little Search Engine</h2>
+		<h2>Test Cases</h2>
+</center>
+<hr>
+		<h3>getKeyword (2 pts per test case)</h3>
+
+		<ol>
+			<li>sWord<br>Ans: sword</li>
+			<li>paraphrase;<br>Ans: paraphrase</li>
+			<li>really?!?!<br>Ans: really</li>
+			<li>Between,<br>Ans: null</li>
+			<li>either:or<br>Ans: null</li>
+		</ol>
+
+		<h3>loadKeywordsFromDocument (5 pts per test case)</h3>
+		<ol>
+			<li>Lots of noise - <a href="pohlx.txt">pohlx.txt</a></li>
+			<li>Lots of keywords - <a href="Tyger.txt">Tyger.txt</a></li>
+			<li>Repetition of keywords - <a href="jude.txt">jude.txt</a></li>
+		</ol>
+
+		<h3>insertLastOccurrence (2 pts per test case)</h3> 
+		<ol>
+			<li>Extreme left insertion <br>
+			Frequencies: [82,76,71,71,70,65,61,56,54,51,48,45,41,36,34,30,25,20,20,18,17,17,14,12,<font color="red">85</font>]<br>
+			Ans: [11,5,2,0]
+			</li>
+			<li>Extreme right insertion <br>
+			Frequencies: [82,76,71,71,70,65,61,56,54,51,48,45,41,36,34,30,25,20,20,18,17,17,14,12,<font color="red">4</font>]<br>
+			Ans: [11,17,20,22,23]
+			</li>
+			<li>In between test 1<br>
+			Frequencies: [82,76,71,71,70,65,61,56,54,51,48,45,41,36,34,30,25,20,20,18,17,17,14,12,<font color="red">50</font>]<br>
+			Ans: [11,5,8,9,10]
+			</li>
+			<li>In between test 2<br>
+			Frequencies: [82,76,71,71,70,65,61,56,54,51,48,45,41,36,34,30,25,20,20,18,17,17,14,12,<font color="red">26</font>]<br>
+			Ans: [11,17,14,15,16]
+			</li>
+			<li>Insertion with a frequency match<br>
+			Frequencies: [82,76,71,71,70,65,61,56,54,51,48,45,41,36,34,30,25,20,20,18,17,17,14,12,<font color="red">17</font>]<br>
+			Ans: [11,17,20]
+			</li>
+		</ol>
+
+		<h3>mergeKeywords (pts: 7,8,8)</h3>
+		<ol>
+			<li>Single document - <a href="metamorphosis.txt">metamorphosis.txt</a></li>
+			<li>2 documents with no intersection - <a href="Tyger.txt">Tyger.txt</a> and <a href="metamorphosis.txt">metamorphosis.txt</a></li>
+			<li>2 documents with a few intersections - <a href="pohlx.txt">pohlx.txt</a> and <a href="pohly.txt">pohly.txt</a></li>
+		</ol>
+
+		<h3>top5Search (pts: 2,3,5,6,6)</h3>
+		docs to use: <a href="doc1.txt">doc1.txt</a>, <a href="doc2.txt">doc2.txt</a>, <a href="doc3.txt">doc3.txt</a>, <a href="doc4.txt">doc4.txt</a>, <a href="doc5.txt">doc5.txt</a>, <a href="doc6.txt">doc6.txt</a>, <a href="doc7.txt">doc7.txt</a> and <a href="doc8.txt">doc8.txt</a>.
+
+		<ol>
+			<li>No matches for either<br>
+			Keywords: strange (no match), case (no match)<br>
+			Ans: no list
+			</li>
+
+			<li>No match for 1 keyword, but more than 5 total matches<br>
+			Keywords: color (doc5,3,7,2,4,1), strange (No match)<br>
+			Ans: doc5,3,7,2,4
+			</li>
+
+			<li>Matches on both keywords, no common docs, more than 5 total matches<br>
+			Keywords: orange (doc5,2,7,3,1), weird (doc6,8)<br>
+			Ans:doc5,6,2,8,7
+			</li>
+
+			<li>4 common docs, no common result frequencies, more than 5 total matches<br>
+			Keywords: red (doc3,2,4,1,7,6), orange (doc5,2,7,3,1)<br>
+			Ans: doc5,3,2,4,7
+			</li>
+
+			<li>2 docs in different lists with the same frequency, more than 5 results<br>
+			Keywords: red (doc3,2,4,1,7,6), car (doc1,3,7,6,4) <br>
+			Ans: (doc1,3,2,7,4) (doc4 freq matches doc6)
+			</li>
+		</ol>
+	
+
+
+</body></html>

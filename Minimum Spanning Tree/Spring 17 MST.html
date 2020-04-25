@@ -1,0 +1,255 @@
+<html>
+	<head>
+		<title>CS112 Spring 2017: Programming Assignment 5 - MST</title>
+		<style>
+body { font: 14px Trebuchet MS, Verdana, Arial, Helvetica, sans-serif;
+}
+td { font: 12px monospace; }
+tt {color:blue;}
+			th {text-align:left; font-size: 14px;}
+a, a:visited { color: blue; }
+pre { color: blue; }
+</style>
+
+		</style>
+	</head>
+	<body>
+		<h2 align = "center">Programming Assignment 5 - MST</h2>
+		<h2 align = "center">Test Cases</h2>
+		<hr />
+		<h3>Graphs Used as Test Cases</h3>
+<p>
+		<table cellpadding = "10">
+						<tr><th><a href="graph1.txt">Graph1</a></th>
+                                                <th><a href="graph2.txt">Graph2</a></th>
+                                                <th><a href="graph3.txt">Graph3</a></th>
+                                                <th><p style="margin-left:30px;"><a href="graph4.txt">Graph4</a></th>
+                                                </tr>
+                                                <tr>
+                                                <td><p style="margin-left:-80px;"><img height="230" width="270" src="graph1.png"></img></td>
+                                                <td><p style="margin-left:-80px;"><img height="230" width="270" src="graph2.png"></img></td>
+                                                <td><p style="margin-left:-80px;"><img height="230" width="300" src="graph3.png"></img></td>
+                                                <td><img height="250" width="350" src="graph4.png"></img></td>
+                                                </tr>
+		</table>
+		</li>
+<b>NOTE:</b>: In each of the tests below, the "Expected Ouput" shows the result in readable
+printed form, but the actual grader checked the resulting data structures in your
+program.
+
+
+		<ol>
+			<li>
+				<h4>Method: MST.initialize</h4>
+				<p>Tested with 4 test cases. In each case partial trees are initialized from the constructed graphs. </p>
+				<table cellpadding = "10">
+					<tr>
+						<th>Points</th>
+						<th>Test Case</th>
+						<th>Expected Output</th>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>graph1.txt</td>
+						<td> 
+							 <br>Vertices: A  PQ:   (A B 4)  (A E 5)</br>
+							 <br>Vertices: B  PQ:   (B A 4)</br>
+							 <br>Vertices: C  PQ:   (C E 6)</br>
+							 <br>Vertices: D  PQ:   (D E 3)</br>
+							 <br>Vertices: E  PQ:   (E D 3)  (E C 6)  (E A 5)</br>
+							 -----------------------------------------------
+					    </td>
+					</tr>
+					<tr>
+						<td>5</td>
+						<td>graph2.txt</td>
+						<td>	
+							<br>Vertices: A  PQ:   (A C 1)  (A D 6)  (A B 8)</br>
+							<br>Vertices: B  PQ:   (B D 4)  (B C 5)  (B A 8)</br>
+							<br>Vertices: C  PQ:   (C A 1)  (C E 2)  (C B 5)  (C D 7)</br>
+							<br>Vertices: D  PQ:   (D E 3)  (D A 6)  (D B 4)  (D C 7)</br>
+							<br>Vertices: E  PQ:   (E C 2)  (E D 3)</br>
+							 -----------------------------------------------
+						</td>
+					</tr>
+					<tr>
+						<td>6</td>
+						<td>graph3.txt</td>
+						<td>
+							<br>Vertices: AA  PQ:   (AA BB 4)  (AA HH 15)</br>
+							<br>Vertices: BB  PQ:   (BB AA 4)  (BB HH 11)  (BB CC 8)</br>
+							<br>Vertices: CC  PQ:   (CC DD 7)  (CC BB 8)  (CC II 10)  (CC FF 18)</br>
+							<br>Vertices: DD  PQ:   (DD CC 7)  (DD FF 14)  (DD EE 9)</br>
+							<br>Vertices: EE  PQ:   (EE DD 9)  (EE FF 12)</br>
+							<br>Vertices: FF  PQ:   (FF GG 2)  (FF EE 12)  (FF DD 14)  (FF CC 18)</br>
+							<br>Vertices: GG  PQ:   (GG HH 1)  (GG II 6)  (GG FF 2)</br>
+							<br>Vertices: HH  PQ:   (HH GG 1)  (HH II 13)  (HH BB 11)  (HH AA 15)</br>
+							<br>Vertices: II  PQ:   (II GG 6)  (II HH 13)  (II CC 10)</br>
+							-----------------------------------------------
+						</td>
+					</tr>
+					<tr>
+						<td>6</td>
+						<td>graph4.txt</td>
+						<td>
+							<br>Vertices: A  PQ:   (A B 1)  (A C 3)  (A E 2)</br>
+							<br>Vertices: B  PQ:   (B A 1)  (B C 4)  (B E 6)  (B F 7)  (B D 5)</br>
+							<br>Vertices: C  PQ:   (C A 3)  (C B 4)  (C G 8)  (C D 9)</br>
+							<br>Vertices: D  PQ:   (D B 5)  (D C 9)  (D G 10)  (D F 11)</br>
+							<br>Vertices: E  PQ:   (E A 2)  (E B 6)  (E F 12)  (E J 13)</br>
+							<br>Vertices: F  PQ:   (F B 7)  (F E 12)  (F D 11)  (F J 16)  (F G 14)  (F I 15)</br>
+							<br>Vertices: G  PQ:   (G C 8)  (G D 10)  (G I 17)  (G H 18)  (G F 14)</br>
+							<br>Vertices: H  PQ:   (H G 18)  (H J 20)  (H I 19)</br>
+							<br>Vertices: I  PQ:   (I F 15)  (I G 17)  (I H 19)  (I J 21)</br>
+						    <br>Vertices: J  PQ:   (J E 13)  (J F 16)  (J H 20)  (J I 21)</br>
+							-----------------------------------------------							
+						</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<h4>Method: PartialTreeList.remove</h4>
+This method was tested by initializing with <tt>graph1.txt</tt> (using our version of
+the <tt>MST.initialize</tt> method), then applying a sequence of 
+removes on the resulting partial tree list. After each remove, the returned partial tree
+was checked.
+
+				<table cellpadding = "10">
+					<tr>
+						<th>Points</th>
+                                                <th>Test Case</th>
+                                                <th>Expected Output</th>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>After 1st remove</td>
+						<td>Vertices: A  PQ:   (A B 4)  (A E 5)</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>After 2nd remove</td>
+						<td>
+						    Vertices: B  PQ:   (B A 4)
+						</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>After 3rd remove</td>
+						<td>Vertices: C  PQ:   (C E 6)</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>After 4th remove</td>
+						<td>Vertices: D  PQ:   (D E 3)</td>
+					</tr>
+					<tr>
+						<td>2</td>
+						<td>After 5th remove</td>
+						<td>Vertices: E  PQ:   (E D 3)  (E C 6)  (E A 5)</td>
+					</tr>
+				</table>
+			</li>
+			<li>
+				<h4>Method: PartialTreeList.removeTreeContaining</h4>
+<p>This method was tested as follows. A correct initial partial tree list was created by
+using our version of the <tt>MST.initialize</tt> method, once for <tt>graph1.txt</tt>,
+and then once for <tt>graph2.txt</tt>. 
+
+<p>For each of these, a remove was done, 
+using our correct version of <tt>PartialTreeList.remove</tt>, then your
+<tt>removeTreeContaining</tt> method was run. The returned partial tree and the
+resulting partial tree list were then both checked for correctness.
+
+				<table cellpadding = "10">
+                                        <tr>
+                                                <th>Points</th>
+                                                <th>Test Case</th>
+                                                <th>Expected Output</th>
+                                        </tr>
+					<tr>
+												<td>7</td>
+											<td>Initialized with graph1.txt<br>Removed partial tree A<br>from partial tree list.<br>Called method for C</td>
+												<td>
+Partial Tree -  Vertices: B PQ: (B A 4)
+												<p>Partial Tree List: <br>Vertices: C  PQ:   (C E 6)</br>
+												<br>Vertices: D  PQ:   (D E 3)</br>
+												<br>Vertices: E  PQ:   (E D 3)  (E C 6)  (E A 5)</br>
+							-----------------------------------------------							
+											</td>
+					</tr>
+					<tr>
+                                                <td>7</td>
+                                                <td>Removed partial tree C<br>from partial tree list<br>Called method for E</td>
+                                            <td>
+                                            	<br>Partial Tree - Vertices: E PQ: (E D 3) (E C 6) (E A 5)<p>Partial Tree List:<br>Vertices: D  PQ:   (D E 3)	</br>	
+                            -------------------------------------------------																			
+											</td>
+                    </tr>
+					<tr>
+                                                <td>7</td>
+                                                <td>Initialized with graph2.txt<br>Removed partial tree A<br>from partial tree list<br>Called method for C</td>
+                                            <td>
+                                                <br>Partial Tree - Vertices: C PQ: (C A 1) (C E 2) (C B 5) (C D 7)<p>Partial Tree List:<br>Vertices: B  PQ:   (B D 4)  (B C 5)  (B A 8)</br>
+												<br>Vertices: D  PQ:   (D E 3)  (D A 6)  (D B 4)  (D C 7)</br>
+												<br>Vertices: E  PQ:   (E C 2)  (E D 3)</br>
+							--------------------	
+                            -----------------------------------------------																			
+											</td>
+                    </tr>
+					<tr>
+                                                <td>7</td>
+                                                <td>Removed partial tree B<br>from partial tree list<br>Called method for D</td>
+                                            <td>Partial Tree - Vertices: D PQ: (D E 3) (D A 6) (D B 4) (D C 7)<p>Partial Tree List:<br>Vertices: E  PQ:   (E C 2)  (E D 3)</br>	
+											</td>
+                    </tr>
+									<table>
+			</li>
+			<li>
+				<h4>Method: MST.execute</h4>
+<p>Tested with your <tt>PartialTree</tt> methods in place</p>.
+
+				<table cellpadding = "10">
+                                        <tr>
+                                                <th>Points</th>
+                                                <th>Tested Input</th>
+                                                <th>Expected Output</th>
+                                        </tr>
+					<tr>
+						<td>8</td>
+						<td>graph3.txt</td>
+						<td>(AA BB 4)
+							(CC DD 7)
+							(EE DD 9)
+							(FF GG 2)
+							(HH GG 1)
+							(II GG 6)
+							(BB CC 8)
+							(II CC 10)</td>
+					</tr>
+					<tr>
+						<td>8</td>
+						<td>graph4.txt</td>
+						<td>(A B 1)
+							(C A 3)
+							(D B 5)
+							(E A 2)
+							(F B 7)
+							(G C 8)
+							(H G 18)
+							(I F 15)
+							(J E 13)</td>
+					</tr>
+					<tr>
+						<td>4</td>
+						<td>graph1.txt</td>
+						<td>(A B 4)
+							(C E 6)
+							(D E 3)
+							(A E 5)</td>
+					</tr>
+				</table>
+			</li>
+			
+		</ol>
+	</body>
+</html>
