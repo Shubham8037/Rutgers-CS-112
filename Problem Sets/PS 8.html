@@ -1,0 +1,547 @@
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
+<style>
+body { font: 14px Trebuchet MS; }
+span.star {color: red; font: bold 18px Verdana, Arial, Helvetica,
+sans-serif;}
+tt,pre { color: blue; }
+</style>
+<title>
+CS112 Spring 2017: Problem Set 8 Solution
+</title>
+</head>
+<body><center>
+<h1>Problem Set 8 - Solution</h1>
+<h2>Binary Tree, Huffman Coding</h2>
+</center>
+<hr>
+<ol>
+<li><span class="star">*</span> Answer the following questions in
+terms of <em>h</em>, the height of a binary tree:
+<ol>
+<li> What is the <b>minimum</b> possible number of nodes in a binary
+tree of height <em>h</em>?
+</li><li> A <em>strictly</em> binary tree is one in which every node has
+either no children or two children; in other words, there is <b>no</b>
+node that has exactly one child. What is the <b>minimum</b> possible number
+of nodes in a strictly binary tree of height <em>h</em>?
+
+</li><li> A <em>complete</em> binary tree is one in which every level
+<b>but</b> the last has the maximum number of nodes possible at that level; the
+last level may have any number of nodes. What is the <b>minimum</b>
+possible number of nodes in a complete binary tree of height <em>h</em>?
+</li>
+</ol> 
+<p><b>SOLUTION</b>
+</p><ol>
+
+<li> h+1 - one node at every level, and there are (h+1) levels
+(levels are numbered 0, 1, ..., h)<p>
+</p></li><li> Every level except the root level has 2 nodes. So, 1 + 2*h<p>
+</p></li><li> Level 0 has 2<sup>0</sup> nodes, level 1 has 2<sup>1</sup> nodes, and so on.
+Level h-1 has 2<sup>(h-1)</sup> nodes. The last level has one node.
+The total is 2<sup>h</sup>-1+1 = 2<sup>h</sup>.
+</li></ol>
+<hr>
+</li><li> Two binary trees are <em>isomorphic</em> if they have the same shape
+(i.e. they have identical structures.)
+Implement the following <b>recursive</b> method:
+
+<pre>    public static &lt;T&gt; boolean isomorphic(BTNode&lt;T&gt; T1, BTNode&lt;T&gt; T2) {
+     /* your code here */
+    }
+
+</pre>
+that returns <b>true</b> if the trees rooted at T1 and T2 are 
+isomorphic, and false otherwise. <tt>BTNode</tt>
+is defined as follows:
+<pre>     public class BTNode&lt;T&gt; {
+         T data;
+         BTNode&lt;T&gt; left, right;
+         BTNode(T data, BTNode&lt;T&gt; left, BTNode&lt;T&gt; right) {
+             this.data = data;
+             this.left = left;
+             this.right = right;
+         }
+     }
+
+</pre>
+<p><b>SOLUTION</b>
+</p><pre>   public static &lt;T&gt; boolean isomorphic(BTNode&lt;T&gt; T1, BTNode&lt;T&gt; T2) {
+      if (T1 == null &amp;&amp; T2 == null) return true;
+      if (T1 == null || T2 == null) return false;
+      if (!isomorphic(T1.left, T2.left)) return false;
+      return isomorphic(T1.right, T2.right);
+   }
+
+</pre>
+<hr>
+</li><li>The <em>radix tree</em> data structure shown below stores the bit strings
+0,1,01,010,100, and 1011 in such a way that each left branch represents a 0
+and each right branch represents a 1.
+<p></p><pre>            
+                 X
+               /   \
+              0     1
+               \   /
+              01  X 
+             /   /  \ 
+           010  100  X
+                      \
+                     1011
+</pre>
+Nodes that do not have any stored bit strings will have a dummy value 'X' instead.
+
+<p>To find whether a bit string exists in this radix tree, start from the root,
+and scanning the bits of the string left to right, take a left turn if the
+but is 0, and a right turn if the bit is 1. If a node can be reached using this
+sequence of turns, and it does not contain the dummy value 'X', then the bit string
+is found, else it is not found.
+</p><ol>
+<li>Given the following bit strings:
+<pre>  1011, 01, 0010, 1010, 011, 1000, 0101
+</pre>
+Starting with an empty radix tree, build it up to store these strings, showing
+the radix tree after <em>each</em> bit string is inserted. (To insert a new
+string you may have to insert more than one new node in the tree built thus far.)
+
+</li><li>How many units of time did it take to build this tree? Treat 
+taking a turn at an existing branch, and inserting a new branch as basic
+unit time operations.
+</li><li>How many units of time would it take to <em>lexicographically sort</em> the
+bit strings in this radix tree, after all the strings have been inserted? Use
+the same basic operations as in the previous question. The output of the sort
+should be:
+<pre>   0010  01  0101  011  1000  1010  1011
+</pre>
+(Lexicographic sort is like alphabetic sort, 0 precedes 1)
+</li><li>How many units of time
+would it take in the worst case to insert a new <em>k</em>-bit
+string into a radix tree? (ANY radix tree, not the specific one above.)
+</li><li>How many units of time would it take in the worst case
+to insert an arbitrary number of bit strings
+whose total length is <em>n</em> bits?
+</li></ol>
+
+<p><b>SOLUTION</b>
+</p><ol>
+<li>
+After inserting 1011:
+<pre>           x
+            \
+             x
+            /
+           x
+            \
+             x
+              \
+              1011 
+</pre>
+After inserting 01:
+<pre>            x
+          /   \
+         x     x
+          \   /
+          01  x
+              \
+               x
+                \
+                1011 
+</pre>
+
+After inserting 0010:
+<pre>            x
+          /   \
+         x     x
+       /   \   /
+      x    01  x
+       \       \
+        x       x
+       /         \
+     0010       1011 
+
+</pre>
+
+After inserting 1010:
+<pre>             x
+          /    \
+         x      x
+       /   \   /
+      x    01  x
+       \        \
+        x        x
+       /       /   \
+     0010    1010  1011 
+</pre>
+After inserting 011:
+<pre>            x
+          /    \
+         x      x
+       /   \   /
+      x    01  x
+       \    \   \
+        x  011   x
+       /       /   \
+     0010    1010  1011 
+</pre>
+After inserting 1000:
+<pre>               x
+            /    \
+          /        \
+         x           x
+       /   \        /
+      x    01      x
+       \    \    /   \
+        x  011  x     x
+       /       /    /   \
+     0010    1000 1010  1011 
+</pre>
+After inserting 0101:
+
+<pre>                 x
+            /       \
+          /          \
+         x             x
+       /   \          /
+      x    01         x
+       \  /  \      /    \
+        x x  011   x      x
+       /   \      /     /   \
+     0010  0101  1000 1010  1011 
+</pre>
+
+</li><li>The number of turns plus new branches is equal to the length
+of the string being added. So total units of time is
+4 + 2 + 4 + 4 + 3 + 4 + 4 = 25.
+</li><li>The lexicographic sort is equivalent to a preorder traversal on
+the radix tree, printing only at the nodes that have values. The first
+value that is printed, 0010, will need 4 turns starting from
+the root. Then the preorder traversal will eventually print 01, after
+backtracking to the parent of 01 and then taking a right turn to get
+to 01. Backtracking does not count for turns since it is
+implemented automatically in the recursion.
+
+<p>The turns for all strings are as follows:
+</p><pre>   0010: 4  (from root)
+   01:   1  (right subtree from great-grandparent of 0010)
+   0101: 2  (left subtree from 01)
+   011:  1  (right subtree from 01)     
+   1000: 4  (from root)
+   1010: 2  (right subtree from grandparent of 1000)
+   1011: 1  (right subtree from parent of 1010)
+-------------
+  Total: 15
+------------- 
+</pre>
+</li><li>To insert a binary string of <em>k</em> bits would require
+<em>k</em> turns/new branches, so <em>k</em> units of time.
+</li><li>For an arbitrary number of bit
+strings whose total length is <em>n</em>, the total number of turns/new branches
+would be <em>n</em>, so <em>n</em> units of time.
+</li></ol>
+<hr>
+<li>A general tree is one in which a node can have any number of children. General
+trees are used to model hierarchies. Think of a company hierarchy with a CEO at
+the root, then presidents of various units that report to her at the next level, then 
+various vice-presidents who report to the presidents at the next level, and so on.
+Computer file systems are hierarchies as well, with a root folder, with other folders
+and files recursively nested under the root. 
+
+<p>Every general tree can be represented as a binary tree. Here's an example of how:
+<pre>
+       A                    
+   ____|_____               A
+   |  |  |  |              /
+   B  C  D  X              B
+     / \    |               \
+     E  F   G                C
+                           /   \
+                          E     D
+                           \     \
+                           F      X
+                                 /
+                                G
+</pre>
+For every node in the general tree:
+<ul>
+<li>The first child of the node becomes the left child of the same node in the binary tree
+<li>The second child of the node becomes the right child of the first
+<li>The third child of the node becomes the right child of the second, and so on
+</ul>
+
+<p>
+<ol>
+<li>Exercise 9.8 of text
+<p>Draw the binary tree representations of the following general trees:
+<pre>
+            (a)                  (b)                  (c)
+
+             A                    A                    A
+        _____|_____          _____|_____          _____|______
+       |     |     |        |     |     |        |   |    |   |     
+       G     H     K        G     H     K        G   H    K   Z
+       |    / \             |     |     |        |   |    |   |
+       B   X   P            X     P     Q        B   X    P   E
+   ____|____                |     |     |       / \      / \
+  |  |   |  |               R     T     S      O   L    N   R
+  O  L   R  E
+</pre>
+<p><b>SOLUTION</b>
+<pre>
+            (a)                  (b)                  (c)
+
+             A                    A                    A
+            /                    /                    /
+           G                    G                    G
+         /   \                /   \                /   \
+        B     H              X     H              B     H
+       /     / \            /     / \            /     / \
+      O     X   K          R     P   K          O     X   K
+       \     \                  /   /            \       / \
+        L     P                T   Q              L     P   Z
+         \                        /                    /   /
+          R                      S                    N   E
+           \                                           \
+            E                                           R
+</pre>
+
+<p><li>Exercise 9.9 of text
+<p>Draw the general trees represented by the following binary trees:
+<pre>
+            (a)                  (b)                  (c)
+
+             A                    T                    A
+            /                    /                    /
+           G                    D                    B
+         /   \                /   \                    \
+        B     L              G     R                    C
+       / \     \           /   \  / \                  /
+      O   R    E          P    Q  E  X                D
+                         / \  / \                      \
+                        A  C  B  D                      E
+</pre>
+<p><b>SOLUTION</b>
+<pre>
+<pre>
+            (a)                  (b)                  (c)
+
+             A                    T                    A
+        _____|_____          _____|_____             __|__
+       |     |     |        |     |     |            |    |
+       G     L     E        D     R     X            B    C
+      / \                ___|___  |                      / \
+     B   R              |   |  |  E                     D   E
+     |                  G   Q  D     
+     O                 / \  |
+                      P   C B
+                      |
+                      A
+</pre>
+</ol>
+
+<hr>
+<li>Suppose the equivalent binary tree for a general tree is built out of the following
+binary tree nodes:
+<pre>
+     public class BTNode&lt;T> {
+        T data;
+        BTNode&lt;T> left, right, parent;
+        ...
+     }
+</pre>
+Complete the following methods
+<p>
+<ol>
+<li>Given a pointer to a node <tt>x</tt>, find and return the node that would be
+<tt>x</tt>'s parent in the general tree:
+<pre>
+      public static &lt;T> BTNode&lt;T> genTreeParent(BTNode&lt;T> x) {
+           /* COMPLETE THIS METHOD */
+      }
+</pre>
+<p><b>SOLUTION</b>
+<pre>
+      public static &lt;T> BTNode&lt;T> genTreeParent(BTNode&lt;T> x) {
+         while (x.parent != null) {
+            if (x == x.parent.left) {
+               return x.parent;
+            }
+            x = x.parent;
+         }
+         return null;
+      }
+</pre>
+
+<p><li><span class="star">*</span> Given a pointer to a node <tt>x</tt>, and an integer <tt>k</tt>,
+find and return the node that would be the k-th child of <tt>x</tt> (k=1 if first child, etc.),
+in the general tree. The method should thrown an exception if there is no k-th child:
+<pre>
+      public static &lt;T> BTNode&lt;T> genTreekthChild(BTNode&lt;T> x, int x) 
+      throws NoSuchElementException {
+           /* COMPLETE THIS METHOD */
+      }
+</pre>
+<p><b>SOLUTION</b>
+<pre>
+      public static &lt;T> BTNode&lt;T> genTreekthChild(BTNode&lt;T> x, int k) 
+      throws NoSuchElementException {
+          if (k <= 0 || x.left == null) {
+             throw new NoSuchElementException();
+          }
+          x = x.left; k--;
+          while (k > 0 && x.right != null) {
+             x = x.right;
+             k--;
+          }
+          if (k > 0 && x.right == null) { // k > #children
+             throw new NoSuchElementException();
+          }
+          return x;
+      }
+</pre>
+</ol>
+
+<hr>
+<li><span class="star">*</span> Suppose you are given the following binary tree class definition, which uses the
+<tt>BTNode&lt;T></tt> class of the previous exercise.
+<pre>
+     public class BinaryTree&lt;T> {
+        private BTNode&lt;T> root;
+        ...
+    } 
+</pre>
+<p>Add the following methods to this class so that applications can do an inorder traversal
+one node at a time:
+<pre>
+       // returns the first node that would be visited in an inorder traversal
+       // null if tree is empty
+       public BTNode&lt;T> firstInorder() {
+           /* COMPLETE THIS METHOD */
+       }
+</pre>
+<p><b>SOLUTION</b>
+<pre>
+       // returns the first node that would be visited in an inorder traversal;
+       // returns null if tree is empty
+       public BTNode&lt;T> firstInorder() {
+          if (root == null) {
+             return null;        
+          }
+          // left most node in tree is the first node in inorder
+          BTNode&lt;T> prev=root, ptr=root.left;
+          while (ptr != null) {
+             prev = ptr;
+             ptr = ptr.left;
+          }
+          return prev;
+       }
+</pre>
+and
+<pre>
+       // returns the next node that would be visited in an inorder traversal;
+       // returns null if there is no next node
+       public BTNode&lt;T> nextInorder(BTNode&lt;T> currentNode) {
+          if (currentNode == null) { // playing defense here
+             return null;
+          }
+          // if there is a right subtree, then right turn, and left all the way to bottom
+          if (currentNode.right != null) {
+             BTNode&lt;T> ptr=currentNode.right;
+             while (ptr.left != null) {
+                ptr = ptr.left;
+             }
+             return ptr;
+          }
+          // no right subtree
+          BTNode&lt;T> p = currentNode.parent;
+          while (p != null && p.right == currentNode) {
+             currentNode = p;
+             p = p.parent;
+          }
+          return p;
+       }
+</pre>
+For instance, an application would call these methods like this to
+do the inorder traversal:
+<pre>
+     BinaryTree&lt;String> strBT = new BinaryTree&lt;String>();
+     // insert a bunch of strings into strBST
+     ...
+     // do inorder traversal, one node at a time
+     BTNode&lt;String> node = strBST.firstInorder();
+     while (node != null) {
+        node = strBST.nextInorder(node);
+     }
+</pre>
+<hr>
+</li><li>Exercise 9.4, page 295 of the textbook.
+<ol>
+<p></p><li>Build a Huffman tree for the following set of characters, given
+their frequencies:
+<pre>        R   C   L   B   H   A   E
+        6   6   6  10  15  20  37
+</pre>
+<p>
+</p></li><li>Using this Huffman tree, encode the following text:
+<pre>    CLEARHEARBARE
+</pre>
+<p></p></li>
+<li>What is the average code length?
+<p>
+</p></li><li>If it takes 7 bits to represent a character without encoding,
+then for the above text, what is the ratio of the encoded length to
+the unencoded?
+
+<p></p></li><li>Decode the following (the string has been broken up into 7-bit
+chunks for readability):
+<pre>   1111011  1010111  1101110  0010011  111000
+
+</pre>
+</li></ol>
+<p><b>SOLUTION</b>
+</p><p>
+</p><ol>
+<li>The probabilities of occurence of the characters, listed in ascending order:
+<pre>     R    C    L    B    H    A    E
+    0.06 0.06 0.06 0.1  0.15  0.2  0.37
+</pre>
+<pre>            1.0
+         0 /    \ 1
+          /      \
+         E       0.63
+              0 /   \ 1
+               /     \
+            0.27     0.36
+          0 /  \1   0/   \1 
+           /    \   /     \
+         0.12    H 0.16    A
+       0 /   \1  0/   \1
+        /     \  /     \
+       R      C  L      B
+
+
+R 1000   
+C 1001
+L 1100
+B 1101
+A 111
+H 101
+E 0
+
+</pre>
+</li><li>
+<pre>100111000111100010101111000110111110000
+</pre>
+</li><li>
+<pre>1*0.37 + 4*0.06 + 4*0.06 + 3*0.15 + 4*0.06 + 4*0.10 + 3*0.20 = 2.54
+</pre>
+</li><li>Length of unencoded representation using 7 bits per character is 7*13=91, while length of 
+representation using Huffman codes is 39. The ratio of encoded to unencoded is 39/91.
+</li><li>
+<pre>AHBEABLECAR
+</pre>
+</li></ol>
+</li></ol>
+
+</body></html>

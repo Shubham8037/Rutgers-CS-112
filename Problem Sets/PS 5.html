@@ -1,0 +1,491 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+
+<style>
+span.star {color: red; font: bold 18px Verdana, Arial, Helvetica,
+sans-serif;}
+body { font : 14px Trebuchet MS; }
+pre,tt { color: blue;}
+</style>
+<title>CS 112 Spring 2017 - Problem Set 5 Solution</title>
+</head><body><center>
+<h1>Problem Set 5 - Solution</h1>
+<h2>Queue, Sequential Search, Binary Search</h2>
+</center>
+<hr>
+<ol>
+<li>You are given the following <tt>Queue</tt> class:
+<pre>      
+      public class Queue&lt;T&gt; {
+         public Queue() { ... }
+         public void enqueue(T item) { ... }
+         public T dequeue() throws NoSuchElementException { ... }
+         public boolean isEmpty() { ... }
+         public int size() { ... }
+     }
+</pre>
+Complete the following <em>client</em> method (<em>not</em> a <tt>Queue</tt> 
+  class method) to implement the <tt>peek</tt> feature, using only the methods 
+  defined in the <tt>Queue</tt> class:
+
+<pre>     
+     // returns the item at the front of the given queue, without 
+     // removing it from the queue
+     public static &lt;T&gt; T peek(Queue&lt;T&gt; q) 
+     throws NoSuchElementException {
+        /** COMPLETE THIS METHOD **/
+     }
+</pre>
+<p>Derive the worst case big <em>O</em> running time of your implementation.
+You may assume that the constructors
+and methods of the <tt>Queue</tt> class all have a worst case
+<em>O(1)</em> running time.
+</p><p>
+
+<b>SOLUTION</b>
+</p><p>
+<ol>
+<li>Version 1, using temporary queue and <tt>isEmpty()</tt> method
+
+</p><pre>     // returns the item at the front of the given queue, without 
+     // removing it from the queue
+     public static &lt;T&gt; T peek(Queue&lt;T&gt; q) 
+     throws NoSuchElementException {
+        /** COMPLETE THIS METHOD **/
+        if (q.isEmpty()) {
+            throw new NoSuchElementException("Queue Empty");
+        }
+        T result = q.dequeue();
+
+        Queue&lt;T&gt; temp = new Queue&lt;T&gt;();
+        temp.enqueue(result);
+      
+        while(!q.isEmpty()) {
+           temp.enqueue(q.dequeue());
+        }
+      
+        while(!temp.isEmpty()) {
+           q.enqueue(temp.dequeue());
+        }
+        return result;
+     }
+</pre>
+
+<p>Basic unit time operations are <tt>enqueue</tt>, <tt>dequeue</tt> and <tt>isEmpty</tt>.
+If the input queue is of size <em>n</em>, the total time is 
+
+<em>2n</em> (enqueues) + <em>2n</em> (dequeues)
++ <em>2n+2</em> (empty checks) = <em>6n+2</em>, which results in O(<em>n</em>) time.
+
+<li>Version 2, using <tt>size()</tt> method, no scratch queue needed
+
+</p><pre>     // returns the item at the front of the given queue, without 
+     // removing it from the queue
+     public static &lt;T&gt; T peek(Queue&lt;T&gt; q) 
+     throws NoSuchElementException {
+        /** COMPLETE THIS METHOD **/
+        if (q.isEmpty()) {
+            throw new NoSuchElementException("Queue Empty");
+        }
+        T result = q.dequeue();
+        q.enqueue(result);
+      
+        // dequeue an element and enqueue it again for (size-1) elements
+        // if there was only 1 element, this loop will not execute
+        for (int i=0; i < q.size()-1; i++) {
+           q.enqueue(q.dequeue());
+        }
+        return result;
+     }
+</pre>
+
+<p><p>Basic unit time operations are <tt>enqueue</tt>, <tt>dequeue</tt>, <tt>isEmpty()</tt> 
+and <tt>size</tt>.
+If the input queue is of size <em>n</em>, the total time is 
+
+<em>1</em> (isEmpty) + <em>n</em> (enqueues) + <em>n</em> (dequeues)
++ <em>1</em> (size) = <em>2n+2</em>, which results in O(<em>n</em>) time.
+
+</ol>
+
+  </li>
+<hr>
+<li><span class="star">*</span> Suppose there is a long line of people at a 
+  check-out counter in a store. A new counter is opened, and people in 
+  the even positions (second, fourth, sixth, etc.) in the original line are 
+  directed to the new line. If a check-out counter line is modeled using a
+  <tt>Queue </tt> class, we can implement this "even split" operation in this class.
+
+  <p>Assume that a <tt>Queue</tt> class is implemented using a CLL, with a 
+  <tt>rear</tt> field that refers to the last node in the queue CLL, and that the 
+  <tt>Queue</tt> class already contains the following constructors and
+  methods: 
+
+</p><pre>  
+      public class Queue&lt;T&gt; {    
+         public Queue() { rear = null; }
+         public void enqueue(T obj) { ... }
+         public T dequeue() throws NoSuchElementException { ... }
+         public boolean isEmpty() { ... }
+         public int size() { ... }
+      }
+</pre>
+Implement an additional method in this class that would perform the even 
+split: 
+<pre>      
+         // extract the even position items from this queue into
+         // the result queue, and delete them from this queue
+         public Queue&lt;T&gt; evenSplit() {
+            /** COMPLETE THIS METHOD **/
+         }
+</pre>
+<p>Derive the worst case big <em>O</em> running time of your implementationYou may assume that the constructors
+and existing methods of the <tt>Queue</tt> class all have a worst case
+<em>O(1)</em> running time.
+</p><p>
+<b>SOLUTION</b>
+</p><p>
+</p><pre>         // extract the even position items from this queue into
+         // the result queue, and delete them from this queue
+         public Queue&lt;T&gt; evenSplit() {
+            /** COMPLETE THIS METHOD **/
+
+            // Front of queue is at position 1, so we will extract 2nd, 4th, 6th, ...
+            Queue&lt;T&gt; evenQueue = new Queue&lt;T&gt;(); 
+            int originalSize = size();// size of this original queue
+
+            // iterate once over each pair of queue elements
+            for (int pos=2; pos &lt;= originalSize; pos += 2) {
+                // the first in a pair is recycled
+                enqueue(dequeue());
+
+                // the second in a pair goes to result queue
+                evenQueue.enqueue(dequeue());
+            }
+ 
+            // if original size was an odd number, we need to
+            // recycle one more time
+            if ((originalSize % 2) == 1) {
+                enqueue(dequeue());
+            }
+
+            return evenQueue;
+         }
+
+</pre>
+The basic operations are <tt>enqueue</tt> and <tt>dequeue</tt>. The <tt>size()</tt>
+method is only called once, at the beginning, and can be ignored. If the size of
+the queue is <em>n</em>, there are exactly <em>n</em> enqueues and <em>n</em> dequeues,
+for a total time of <em>2n</em>. Which then works out to <em>O(n)</em>
+
+</li>
+<hr>
+<li>Given the following sequence of integers: 
+<pre>          3, 9, 2, 15, -5, 18, 7, 5, 8
+</pre>
+  <ol>
+    <li>What is the average number of comparisons for a successful search 
+    assuming all entries are searched with equal probability? Show your work. 
+    </li><li>Suppose the search probabilities for the elements of this list are, 
+    respectively: <pre>         0.1, 0.3, 0.05, 0.2, 0.05, 0.1, 0.05, 0.1, 0.05
+</pre>What is the average number of comparisons for successful search with 
+    these search probabilities? Show your work. 
+    </li><li>Rearrange the list entries in a way that would result in the lowest 
+    number of comparisons on the average for successful search, given the above 
+    probabilities of search. What is this lowest number of comparisons? Show 
+    your work. </li></ol>
+<p>
+<b>SOLUTION</b>
+</p><p>
+
+</p><ul>
+<li>In a sequential search of a list, it takes one comparison to succeed at the first 
+element, two comparisons to succeed the second element, and so on. In general it takes 
+<em>i</em> comparisons to succeed at the <em>i</em>-th element. With the assumption 
+that all entries are searched with equal probability, the formula is: 
+<pre>     (1 + 2 + 3 + 4 + ... + n) / n = n*(n + 1)/2*n = (n + 1)/2
+</pre>
+</li><li>If the search probabilities are changed according to the given example, the 
+average # of comparisons should be computed as follows:
+<pre>0.1 x 1 + 0.3 x 2 + 0.05 x 3 + 0.2 x 4 + 
+0.05 x 5 + 0.1 x 6 + 0.05 x 7  + 0.1 x 8 + 0.05 x9 = 4.1
+</pre>
+</li><li>We should rearrange the entries such that entries with high search probabilities 
+come first in the list. For example the entry "9" should be the first item since it has 
+the highest search probability. Following this procedure, the new list should be 
+arranged like this:
+<pre>   9 15 {3,5,18} {2,-5,7,8}
+</pre>
+The entries in the brackets can be arranged in an arbitrary order since they have the 
+same search probabilities.
+</li></ul>
+<hr>
+</li><li>An adaptive algorithm to lower average match time for sequential search
+is to move an item by one spot toward the front every time it is matched. (Unless
+it is already at the front, in which case nothing is done on a match.) Complete
+the following modified sequential search on a linked list with this move-toward-front 
+adaption. Assume a generic <tt>Node</tt> class with <tt>data</tt> and <tt>next</tt>
+fields.
+<pre>     public class LinkedList&lt;T&gt; {
+         private Node&lt;T&gt; front;
+         int size;
+         ...
+         // moves the target one place toward the front
+         // doesn't do anything if target is in the first node
+         // returns true if target found, false otherwise
+         public boolean moveTowardFront(T target) {
+             // COMPLETE  THIS METHOD
+         }
+     }
+</pre>
+<p><b>SOLUTION</b>
+</p><pre>         public boolean moveTowardFront(T target) {
+             // COMPLETE  THIS METHOD
+             Node<t> ptr=front, prev=null;
+             while (ptr != null) {
+                if (ptr.data.equals(target)) {
+                   break;
+                } else {
+                   prev = ptr; 
+                   ptr = ptr.next;
+                }
+             }
+             if (ptr == null) {  // not found
+                return false;  
+             }
+             if (prev == null) { // front node, do nothing
+                return true;
+             }
+             // switch with previous
+             T temp = prev.data;
+             prev.data = ptr.data;
+             ptr.data = temp;
+             return true;
+         }
+</t></pre>
+<hr>
+<li>
+Draw the comparison tree for binary search on a sorted array of length 11.
+<ol>
+<li>What is the worst case number of comparisons for success? For failure?
+</li><li>What is the average number of comparisons for success, assuming equal
+likelihood of success at any spot?
+</li>
+</li><li>What can you say about the average number of comparisons for failure?
+Can you approximate it within a small range? Does it depend on the 
+distribition of the probabilities of failing at the various failure spots?
+</li></ol>
+<p>
+<b>SOLUTION</b>
+</p><p>
+For the comparison tree, the nodes have the index positions where
+comparisons are made:
+</p><pre>              (5) =
+       &lt; /           \ &gt;
+    = (2)             (8) =
+   &lt; /   \ &gt;       &lt; /   \ &gt;
+= (0)     (3) =  = (6)     (9) =
+
+&lt; / \ &gt; &lt; / \ &gt;  &lt; / \ &gt; &lt; / \ &gt;
+ F (1)=  F (4)=   F (7)=  F (10)=
+  &lt; /\ &gt;  &lt; /\ &gt;  &lt; /\ &gt;   &lt; /\ &gt;
+   F  F    F  F    F  F     F  F
+</pre>
+<ol>
+<li>Worst case #comparisons for success = 7 (for positions 1, 4, 7, 10),
+worst case #comparisons for failure = 8 (for failures off the positions 1, 4, 7, 10)
+<p><li>Average #c for success = (1*1 + 2*3 + 4*5 + 4*7)/11 = 5
+<p><li>It would take 6 comparisons to get to any of the failure nodes at the last
+but one level, and 8 comparisons for the last. So the average MUST be between 6 and 8,
+no matter what the probability distribution is over all of these possibilities. 
+</p></li></ol>
+<hr>
+<li><span class="star">*</span>
+A variant of binary search, called <em>lazy</em> binary search, works as
+described in the following algorithm, where <tt>t</tt> is the target to search,
+and <tt>n</tt> is the size of the array:
+</p><pre>    left &lt;-- 0
+    right &lt;-- n-1
+    while (left &lt; right) do 
+       mid &lt;-- (left + right)/2
+       if (t &gt; A[mid]) then
+          left &lt;-- mid + 1
+       else 
+          right &lt;-- mid
+       endif
+    endwhile
+    if (t == A[left]) then 
+       display "found at position", left
+    else 
+       display "not found"
+    endif
+
+</pre>
+<ol>
+<li>Trace this algorithm on the following array, with 46 as the search target:
+<pre>     10   15   25   30   45   46   48   72   76   80   93   
+</pre>
+How many comparisons are made by the time a match is found? How does your
+answer compare with that for regular binary search?
+<p><b>ANSWER</b>
+<p>4; while it takes 1 for regular binary search.
+<li>Repeat with 40 as the target. How many comparisons are made 
+until failure is detected? How does your
+answer compare with that for regular binary search?
+<p><b>ANSWER</b>
+<p>5; while it takes 8 for regular binary search.
+<li>Draw the comparison tree for lazy binary search on an array of length 11
+(same length as the example array above).
+
+<p><b>SOLUTION</b>
+<p>
+Actual values in the array are used instead of the index positions, for better clarity. 
+<p><img src="lazy.png" height="250">
+</p><p>Note that the comparison
+<tt>t &gt; A[mid]</tt> is labeled on the right branch, and its flip (&#8815;) is labeled
+on the left branch, instead of against the <tt>A[mid]</tt> value itself 
+because this makes for
+easier counting as you descend the tree. (Only one comparison is actually made,
+so that whether you take the left or right branch, you will only count one
+comparison.) Also, for the comparison <tt>t == A[left]</tt> after exiting the
+loop, the comparison is marked against the value in the tree, and the flip side 
+of this comparison will result in falling through to the failure node. 
+
+<ol>
+<li>What is the worst case number of comparisons for success? For failure?
+
+<p><b>ANSWER</b>
+<p>Worst case #comparisons for success = 5, same for failure
+
+<p><li>What can you say about the range of values for the average number
+of comparisons for success? For failure?
+<p><b>ANSWER</b>
+<p>Success happen at the last second-to-last and the third-to-last levels.
+For any success node in the second-to-last level the number of comparisons
+is 5, and for the third-to-last level is 4. So the average MUST be in
+the range 4 to 5.
+<p>Failure happens at the last and second-to-last levels.
+For any failure node in the last level the number of comparisons
+is 5, and for the second-to-last level is 4. So the average MUST be in
+the range 4 to 5.
+<p><li>Under what conditions is it preferable to use lazy binary search
+over the regular binary search?
+<p><b>ANSWER</b>
+<p>Lazy binary search is better when there are more failures than successes
+since failures take fewer comparisons on average. Matches/successes at certain positions
+now take longer to get to, but the average number of comparisons is reduced since the
+new tree is less than double the height of the old, but the number of comparisons is
+halved. So, in sum, lazy binary search reduces the average 
+number of comparisons for both successes and failures, and it levels the playing field
+over successes and failures. Of course, since the running time is already low at O(log n),
+the reduction is minimal.
+</li></ol>
+</ol>
+<hr>
+<li>
+<p>An alternative algorithm for searching on a
+  sorted array of size <i>n</i> works as follows. It divides the array into 
+  <i>m</i> contiguous blocks each of size <i>s</i>. (Assume that <i>s</i> 
+divides into <i>n</i> without remainder). 
+
+</p><p>Here is the algorithm to search for a key <i>k</i> in sorted array <em>A</em>.
+
+</p><pre>Compare <em>k</em> with the last entry in the first block, i.e. <em>A[s-1]</em>
+If there is match, then stop with success
+
+Otherwise, check if <em>k</em> &lt; <em>A[s-1]</em>
+If so, perform a sequential search on the block of entries from 
+<em>A[0]</em> to <em>A[s-2]</em>. If there is a match, stop with success,
+otherwise stop with failure.
+
+If <em>k</em> is not &lt; <em>A[s-1]</em> then continue the process by
+repeating the above on the second block, and so on. 
+
+</pre>
+<ul>
+<li>a) <span class="star">*</span> 
+What is the <b>worst</b> case number of searches for success? 
+<p><b>SOLUTION</b>
+<p>
+In the worst case, the last entry of every block is checked, and finally,
+a sequential search is performed in the last block. A total of <em>2m</em>
+comparisons are made before the sequential search in the last block: 2 comparisons
+per last entry of each the <em>m</em> blocks. Then, the sequential search in the
+last block makes <em>s-1</em> comparisons. Total comparisons = <em>2m + s -1</em>
+<li>b) <span class="star">**</span> 
+What is the <b>average</b> case number of searches for success? 
+</li></ul>
+<p><b>SOLUTION</b>
+<p>b) Compute the number of comparisons for each
+match, and then divide by number of entries.
+
+<p>For first block matches:
+</p><pre>           item     compares
+         --------------------
+           last         1
+           first        3
+           second       4
+           ..
+           second last  (s+1)
+</pre>
+<p>For second block matches: Before getting to the last item in the block, 2 comparisons
+(against the last item in the previous block). 
+Then, within the block, the pattern is the same as in the previous table, so:
+</p><pre>           item     compares
+         --------------------
+           last         1 (+2)
+           first        3 (+2)
+           second       4 (+2)
+           ..
+           second last  (s+1) (+2)
+</pre>
+<p>For third block: Before getting to the last item in the block, 4 comparisons
+(2 comparisons against the last item in the 1st block, then 2 comparisons against the
+last item in the 2nd block.)
+Then, within block same as before, so:
+</p><pre>           item     compares
+         --------------------
+           last         1 (+4)
+           first        3 (+4)
+           second       4 (+4)
+           ..
+           second last  (s+1) (+4)
+</pre>
+</p><p>So, the total looks like  this:
+</p><pre>         (1 + 3 + 4 + 5 + ... + (s+1))           [1st block]     
+     +   (1 + 3 + 4 + 5 + ... + (s+1)) + 2*s     [2nd block, 2 added to each of the s items]
+     +   (1 + 3 + 4 + 5 + ... + (s+1)) + 4*s     [3rd block, 4 added to each of the s items]
+     +    ....
+     +   (1 + 3 + 4 + 5 + ... + (s+1)) + 2*(m-1)*s  
+</pre>
+Let the above sum be <tt>T</tt>. The average number of comparisons would be
+<tt>T/n</tt>. We can simplify <tt>T</tt> as follows.
+
+<p>Let's first take the series:
+</p><pre>    S = 1+3...+(s+1)
+</pre>
+We can transform this to:
+<pre>    S = [1+2+3+...+(s+1)] - 2
+</pre>
+Adding a 2 makes it an arithmetic series from 1 to (s+1), and we take away the 2 to
+compensate. This simplifies to:
+<pre>     S = (s+1)(s+2)/2 - 2
+</pre>
+<tt>S</tt> occurs <em>m</em> times in <tt>T</tt> (once per block). So this
+component of <tt>T</tt> sums to:
+<pre>    m[(s+1)(s+2)/2-2]
+</pre>
+Now let's look at the other component of <tt>T</tt>, which is:
+<pre>   2s + 4s + ... + 2(m-1)s = 2s[1+2+...(m-1)] = 2sm(m-1)/2 = n(m-1)
+</pre>
+So now we have:
+<pre>    T = m[(s+1)(s+2)/2-2] + n(m-1) = m[(s^2 + 3s + 2)/2 -2] + n(m-1)
+      
+      = (ms*s+3ms+2m)/2 - 2m + n(m-1) = ns/2 + 3n/2 + m - 2m + nm - n = ns/2 + n/2 - m + nm
+</pre>
+So average, <tt>T/n</tt> = <tt>s/2 + 1/2 - m/n + m</tt>
+
+</li></ul>
+</ol>
+
+
+</body></html>

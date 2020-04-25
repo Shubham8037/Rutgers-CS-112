@@ -1,0 +1,444 @@
+<html><head>
+<title>CS112 Spring 2017: Problem Set 7 Solution</title>
+<style>
+span.star {color: red; font: bold 18px Verdana, Arial, Helvetica,
+sans-serif;}
+body { font : 14px Trebuchet MS; }
+pre,tt { color: blue;}
+</style>
+</head><body>
+<center>
+<h1>Problem Set 7 - Solution</h1>
+<h2>AVL Tree</h2>
+</center>
+<hr>
+<ol>
+<li><span class="star">*</span>&nbsp;
+Each node of a BST can be filled with a height value, which is the height
+of the subtree rooted at that node. The height of a node is the maximum of the
+height of its children, plus one. The height of an empty tree is -1.
+Here's an example, with the value in parentheses indicating the height of the 
+corresponding node:
+<pre>                  P(3)
+                /   \
+               M(1)  V(2)
+              /     /  \
+             A(0)  R(1) X(0)
+                   \
+                    S(0)
+</pre>
+
+Complete the following recursive method to fill each node of a BST with its height
+value.
+<pre>   public class BSTNode&lt;T extends Comparable<t>&gt; {
+       T data;
+       BSTNode&lt;T&gt; left, right;
+       int height;
+       ...
+   }  
+
+   // Recursively fills height values at all nodes of a binary tree
+   public static &lt;T extends Comparable<t>&gt; 
+   void fillHeights(BSTNode&lt;T&gt; root) {
+       // COMPLETE THIS METHOD 
+       ...
+   }
+</t></t></pre>
+<p><b>SOLUTION</b>
+</p><p></p><pre>   // Recursively fills height values at all nodes of a binary tree
+   public static &lt;T extends Comparable<t>&gt; 
+   void fillHeights(BSTNode<t> root) {
+      if (root == null) { return; }
+      fillHeights(root.left);
+      fillHeights(root.right);
+      root.height = -1;
+      if (root.left != null) {
+         root.height = root.left.height;
+      }
+      if (root.right != null) {
+         root.height = Math.max(root.height, root.right.height);
+      }
+      root.height++;  
+   }
+</t></t></pre>
+<hr>
+</li><li> In the AVL tree shown below, the leaf "nodes" are actually <b>subtrees</b>
+whose heights are marked in parentheses:
+<pre>                       ------ D -------
+                      /                 \
+                     B                    F
+                  /     \             /       \
+                A         C          E         G
+              /   \     /   \      /   \     /   \
+             T1   T2   T3   T4    T5   T6   T7   T8
+           (h-1) (h) (h-1) (h-1) (h+1) (h) (h)   (h)
+</pre>
+<ol>
+<li> Mark the heights of the subtrees at every node in the tree. What is the
+height of the tree?
+</li><li> Mark the balance factor of each node.
+</li></ol>
+<p><b>SOLUTION</b>
+</p><p>Heights/Balance factors<br>
+A:h+1/right, C:h/equal, E:h+2/left, G:h+1/equal, B:h+2/left, F:h+3/left, D:h+4/right<br>
+Height of the tree is h+4
+</p><p></p>
+</li>
+<hr>
+<li>Given the following AVL tree:
+
+<pre>                                ---J---
+                               /        \
+                              F         T
+                            /   \     /    \
+                           C    H     N     X
+                          / \        / \   /
+                         B  E       L   Q  V
+                                       / \  
+                                      O   S
+
+</pre><p>
+</p><ol>
+<li> Determine the height of the subtree rooted at each node in the
+tree.<p>
+</p></li><li> Determine the balance factor of each node in the tree.<p>
+</p></li><li> Show the resulting AVL tree after each insertion in 
+the following sequence: (In all AVL trees you show, mark
+the balance factors next to the nodes.)
+<ul>
+<li> Insert Z
+</li><li> Insert P
+</li><li> Insert A
+</li></ul>
+</li></ol>
+<p><b>SOLUTION</b>
+</p><p>1 and 2:
+    
+    
+    </p><pre>           Node    Height    Balance factor<br>           --------------------------------------<br>            B        0          -<br>            E        0          -<br>            C        1          -<br>            F        2          /<br>            H        0          -<br>            O        0          -<br>            S        0          -<br>            Q        1          -<br>            L        0          -<br>            N        2          \<br>            V        0          -<br>            X        1          /<br>            T        3          /<br>            J        4          \        <br></pre>
+
+
+
+<p>3:
+    </p><ul>
+
+
+
+      <li> After Inserting Z: 
+        
+        
+        <pre>                                ---J---<br>                               /        \<br>                              F         T<br>                            /   \     /    \<br>                           C    H     N     X -<br>                          / \        / \   / \<br>                         B  E       L   Q  V  Z -<br>                                       / \  <br>                                      O   S<br><br></pre>
+
+
+
+Only the balance factors of Z and X are changed; others remain the same 
+        
+        
+        <p>
+        </p>
+
+
+      </li>
+
+
+      <li> After inserting P (in the tree above):
+        
+        
+        <pre>                                ---J---<br>                               /        \<br>                              F         T<br>                            /   \     /    \<br>                           C    H     N \   X -<br>                          / \        / \   / \<br>                         B  E       L / Q  V  Z -<br>                                       / \  <br>                                    \ O   S<br>                                       \<br>                                      - P<br></pre>
+
+
+
+        
+        
+        <ul>
+
+
+
+          <li> Insert P as the right child of O
+          </li>
+
+
+          <li> Set bf of P to '-'
+          </li>
+
+
+          <li> Back up to O and set bf '\'
+          </li>
+
+
+          <li> Back up to Q and set bf to '/'
+          </li>
+
+
+          <li> Back up to N and stop. N is unbalanced, so rebalance at N.
+          </li>
+
+
+        
+        
+        </ul>
+
+
+        
+        
+        <p>
+Rebalancing at N is Case 2.
+        </p>
+
+
+        
+        
+        <ul>
+
+
+
+          <li> First, rotate O-Q
+            
+            
+            <pre>                                ---J---<br>                               /        \<br>                              F         T<br>                            /   \     /    \<br>                           C    H     N \   X -<br>                          / \        / \   / \<br>                         B  E       L   O  V  Z -<br>                                         \  <br>                                          Q<br>                                         / \<br>                                       - P  S<br></pre>
+
+
+
+          </li>
+
+
+          <li> Then, rotate O-N
+            
+            
+            <pre>                                ---J---<br>                               /        \<br>                              F         T<br>                            /   \     /    \<br>                           C    H     O-    X -<br>                          / \        / \   / \<br>                         B  E      /N  -Q  V  Z -<br>                                   /   / \  <br>                                 -L  - P  S<br></pre>
+
+
+
+          </li>
+
+
+        
+        
+        </ul>
+
+
+        
+        
+        <p>
+        </p>
+
+
+      </li>
+
+
+      <li> After inserting A (in the tree above):
+        
+        
+        <pre>                                ---J---<br>                               /        \<br>                              F         T<br>                            /   \     /    \<br>                          /C    H     O-    X -<br>                          / \        / \   / \<br>                        /B  E      /N  -Q  V  Z -<br>                        /          /   / \  <br>                      -A         -L  - P  S<br></pre>
+
+
+
+        
+        
+        <ul>
+
+
+
+          <li> Insert A as the left child of B
+          </li>
+
+
+          <li> Set bf of A to '-'
+          </li>
+
+
+          <li> Back up to B and set bf to '/'
+          </li>
+
+
+          <li> Back up to C and set bf to '/'
+          </li>
+
+
+          <li> Back up to F and stop. F is unbalanced, so rebalance at F.
+          </li>
+
+
+        
+        
+        </ul>
+
+
+        
+        
+        <p>
+Rebalancing at F is Case 1.
+        </p>
+
+
+        
+        
+        <ul>
+
+
+
+          <li> Rotate C-F
+            
+            
+            <pre>                                ---J---<br>                               /        \<br>                             -C         T<br>                            /  \      /    \<br>                          /B  -F      O-    X -<br>                          /   / \    / \   / \<br>                        -A   -E H- /N  -Q  V  Z -<br>                                   /   / \  <br>                                 -L  - P  S<br></pre>
+
+
+
+          </li>
+
+
+        
+        
+        </ul>
+
+
+
+      </li>
+
+
+    
+    
+    </ul>
+
+
+
+    
+    
+
+    
+<p></p><hr>
+</li><li>Starting with an empty AVL tree, the following sequence of keys
+are inserted one at a time:
+<pre>      1, 2, 5, 3, 4
+</pre>
+Assume that the tree allows the insertion of duplicate keys.
+
+<p>What is the total units of work performed to get to the final AVL
+tree, counting only key-to-key comparisons and pointer assignments? Assume each
+comparison is a unit of work and each pointer assignment is a unit of
+work.
+ (Do not count pointer assignments used in traversing the tree. Count only
+assignments used in changing the tree structure.)
+</p><p><b>SOLUTION</b>
+</p><p>Since the tree allows duplicate keys, only one comparison is needed at every node
+to turn right (&gt;) or left (not &gt;, i.e. &lt;=) when descending to insert.
+</p><ul>
+<li>To insert 1: 0 units
+<pre>     1
+</pre>
+</li><li>To insert 2: 1 comparison + 1 pointer assignment = 2 units<br>
+<pre>     1
+      \
+       2
+</pre>
+</li><li>To insert 5: 2 comparisons + 1 pointer assignment:
+<pre>     1
+      \
+       2
+        \
+         5
+</pre>
+Then rotation at 2-1, with 3 pointer assignments:
+<pre>    root=2, 2.left=1, 1.right=null
+</pre>
+Total: 2+1+3 = 6 units, resulting in this tree:
+<pre>     2
+    / \
+   1   5
+</pre>
+</li><li>To insert 3: 2 comparisons + 1 pointer assignment = 3 units:
+<pre>     2
+    / \
+   1   5
+      /
+     3
+</pre>
+</li><li>To insert 4: 3 comparisons + 1 pointer assignment:
+<pre>     2
+    / \
+   1   5      
+      /
+     3
+      \
+       4
+</pre>
+Then a rotation at 4-3, with 3 pointer assignments:
+<pre>     2
+    / \
+   1   5   Pointer assignments: 5.left=4, 3.right=null, 4.left=3
+      /
+     4
+    /
+   3
+</pre>
+And a rotation at 4-5, with 3 pointer assignments:
+<pre>     2
+    / \
+   1   4   Pointer assignments: 2.right=4, 4.right=5, 5.left=null
+      / \
+     3   5
+</pre>
+Total: 10 units
+</li></ul>
+<p>Grand total: 21 units of work
+</p>
+<p></p><hr>
+</li>
+<li><span class="star">*</span>&nbsp;
+After an AVL tree insertion, when climbing back up toward the root, a
+node <tt>x</tt> is found to be unbalanced. Further, it is determined that 
+<tt>x</tt>'s balance factor is the same as that of the root, <tt>r</tt> of its
+taller subtree (Case 1). Complete the following <tt>rotateCase1</tt>
+method to perform the required rotation
+to rebalance the tree at node <tt>x</tt>. You may assume that <tt>x</tt> is not
+the root of the tree.
+
+<pre>    public class AVLTreeNode&lt;T extends Comparable&lt;T&gt;&gt; {
+       public T data;
+       public AVLTreeNode&lt;T&gt; left, right;
+       public char balanceFactor;   // '-' or '/' or '\'
+       public AVLTreeNode&lt;T&gt; parent;
+       public int height; 
+    }
+
+    public static &lt;T extends Comparable&lt;T&gt;&gt;
+    void rotateCase1(AVLTreeNode&lt;T&gt; x) {
+          // COMPLETE THIS METHOD
+     }
+</pre>
+<b>SOLUTION</b>
+<pre>   public static &lt;T extends Comparable&lt;T&gt;&gt;
+   void rotateCase1(AVLTreeNode&lt;T&gt; x) {
+      // r is root of taller subtree of x
+      r = x.balanceFactor == '\' ? x.right : x.left;
+      if (x.parent.left == x) { x.parent.left = r; } else { x.parent.right = r; }
+      r.parent = x.parent;      
+      if (x.balanceFactor == '\') { // rotate counter-clockwise
+         AVLTreeNode<t> temp = r.left;
+         r.left = x;
+         x.parent = r;
+         x.right = temp;
+         x.right.parent = x;
+      } else { // rotate clockwise
+         AVLTreeNode<t> temp = r.right;
+         r.right = x;
+         x.parent = r;
+         x.left = temp;
+         x.left.parent = x;
+      }
+      // change bfs of r and x
+      x.balanceFactor = '-';
+      r.balanceFactor = '-';
+      // x's height goes down by 1, r's is unchanged
+      x.height--;
+
+   }
+
+</t></t></pre>
+</li></ol>
+
+
+
+
+
+</body></html>

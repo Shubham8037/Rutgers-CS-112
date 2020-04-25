@@ -1,0 +1,216 @@
+<html>
+<head>
+<style>
+body { font: 14px Trebuchet MS; } 
+span.star {color: red; font: bold 18px Verdana, Arial, Helvetica,
+sans-serif;}
+tt, pre { color: blue; }
+</style>
+<title>CS112 Spring 2017: Problem Set 10</title>
+</head><body>
+
+<center>
+<h1>Problem Set 10 - Solution</h1>
+<h2>Heap</h2>
+</center>
+
+<hr>
+<ul>
+
+<ol>
+<li> Given the following sequence of integers:
+<pre> 
+    12, 19, 10, 4, 23, 7, 45, 8, 15
+</pre>
+
+  <ol>
+
+    <li> Build a heap by inserting the above set, one integer at
+a time,
+in the given sequence. Show the heap after every insertion. How many
+comparisons in all did it take to build the heap?
+    </li>
+
+    <li> Perform successive <em>delete</em>
+operations on the heap constructed
+in the previous step, until the heap is empty. Show the heap after
+every
+deletion. How many comparisons in all did it take to perform these
+deletions?
+    </li>
+
+  </ol>
+<p><b>SOLUTION</b>
+  </p><ol>
+
+<li>
+The heaps built one at a time are shown in the following table.
+The first column is the item that is inserted, the second column is
+the heap after this item is inserted (indicated by its 
+level order traversal), and the third column is the number of 
+item-to-item comparisons made by the sift up process.
+<pre>Insert       Heap after insertion     Number of comparisons
+--------------------------------------------------------------------
+12           12                          0
+19           19 12                       1
+10           19 12 10                    1
+4            19 12 10 4                  1
+23           23 19 10 4 12               2
+7            23 19 10 4 12 7             1
+45           45 19 23 4 12 7 10          2
+8            45 19 23 8 12 7 10 4        2
+15           45 19 23 15 12 7 10 4 8     2
+</pre>
+
+Total # of comparisons = 12
+      <p></p>
+
+    </li>
+
+    <li>The left column shows the heap (level order traversal
+representation)
+      <b>after</b> deleting the top of the heap, and the
+right column shows
+the number of item-to-item comparisons made by the sift-down process.
+
+<pre>Heap after deletion        Number of comparisons
+-------------------------------------------------
+23 19 10 15 12 7 8 4       4
+19 15 10 4 12 7 8          4
+15 12 10 4 8 7             4
+12 8 10 4 7                4
+10 8 7 4                   2
+8 4 7                      2
+7 4                        1
+4                          0
+empty                      0
+</pre>
+
+Total number of comparisons = 21
+</li>
+  </ol>
+<hr>
+<li>Suppose we have a (<b>max</b>) heap that stores integers. 
+(By contrast, in a "min" heap the
+key at any node is <em>less than or equal to</em> the key at its children,
+so the <em>smallest</em> valued key is at the top of the heap.)
+Then,
+given an
+integer <em>k</em>, we would like to print all the values
+in this heap
+that are <em> greater than k</em>. Implement the following
+method to
+do this.
+<pre> 
+    public void printGreater(int[] H, int n, int k) {
+       /* your code here */
+    }
+</pre>
+  <em>H</em> is the array storage for the max heap, and <em>n</em>
+is the
+number of entries in the heap.
+  <p><em>Note: The challenge is to do this efficiently. Use
+the heap order
+to reduce the number of entries of the heap to be examined.</em></p>
+
+  <p><b>SOLUTION</b>
+
+</p><pre>   public void printGreater(int[] H, int n, int k) {
+      recursivePrintGreater(H, n, k, 0);
+   }
+
+   private void recursivePrintGreater(int[] H, int n, int k, int  rootIndex) {  
+      if (rootIndex &gt;= n) return; // out of bounds
+      if (H[rootIndex] &lt;= k) return; // all values &lt;= k in this sub-heap
+      System.out.println(H[rootIndex]); // print root value
+      recursivePrintGreater(H, n, k, 2*rootIndex+1); // left sub-heap
+      recursivePrintGreater(H, n, k, 2*rootIndex+2); // right sub-heap
+   }
+</pre>
+
+  <hr>
+</li><li>Consider
+a max heap that only
+supports the operations <b>insert</b>, <b>deleteMax</b>,
+  <b>size</b>, and <b>isEmpty</b>. A client of
+the heap wants to update the priority of an entry in the heap. Since
+there is no search operation, the only way to accomplish the update is
+this:
+  <p></p>
+
+  <ul>
+
+    <li>Perform successive <b>deleteMax</b>
+operations until the entry is extracted
+    </li>
+
+    <li>Update the entry's priority
+    </li>
+
+    <li><b>Insert</b> the entry, as well as all the
+other deleted entries back into the heap
+    </li>
+
+  </ul>
+
+  <p>What would be the worst case running time (big <em>O</em>)
+of this update process on a heap with <em>n</em> entries?
+  </p>
+
+  <p><b>SOLUTION</b> 
+  </p><p>In the worst case, <em>n</em> deletes and <em>n</em>
+inserts would need to be done.
+The time for the deletes is as follows (approximated for big O):
+  </p>
+
+<pre>    log n + log (n-1) + log (n-2) + .... + 1 = log (n!) = O(n*log n)
+</pre>
+The total time for the inserts is also O(n*logn ) by a similar
+argument. The update process
+is therefore O(n*log n) 
+  <p></p>
+
+<hr>
+</li><li><span class="star">*</span>&nbsp;Suppose you are given two heaps, stored in arrays.
+Write a method to merge them into a single heap, and return this heap. The original
+heaps are not modified:
+<pre>      public static &lt;T extends Comparable&lt;T&gt;&gt; T[] merge(T[] heap1, T[] heap2) {
+        // COMPLETE THIS METHOD
+      }
+</pre>
+
+<b>SOLUTION</b>
+
+<pre>      public static &lt;T extends Comparable&lt;T&gt;&gt; T[] merge(T[] heap1, T[] heap2) {
+          T[] res = (T[])new Object[heap1.length + heap2.length];
+          for (int i=0; i &lt; heap1.length; i++) {
+              res[i] = heap1[i];
+          }
+          for (int i=0; i &lt; heap2.length; i++) {
+              res[i+heap1.length] = heap2[i];
+          }
+
+          // in res, sift up starting with entries copied from the second heap 
+          for (int s=heap1.length; s &lt; res.length; s++) {
+              int k=s;
+              // sift up res[k]
+              while (k &gt; 0) {
+                 int p = (k-1)/2;
+                 if (res[k].compareTo(res[p]) &gt; 0) { // switch
+                    T temp = res[k]; res[k] = res[p]; res[p] = temp;
+                    k = p;
+                 } else {
+                    break; 
+                 }
+              }
+
+          }
+
+          return res;
+       }
+</pre>
+</li>
+</ol>
+
+
+</ul></body></html>

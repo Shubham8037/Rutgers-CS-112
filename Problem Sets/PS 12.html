@@ -1,0 +1,237 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+<style>
+body { font: 14px Trebuchet MS; } 
+span.star {color: red; font: bold 18px Verdana, Arial, Helvetica,
+sans-serif;}
+tt, pre { color: blue; }
+table { font: 14px Trebuchet MS; border-collapse: collapse;}
+th { border-bottom: 1px solid black; text-align: left; padding-left: 30px;}
+td { padding-left: 30px; }
+tr.total td { border-top: 1px solid black; font-weight: bold;}
+</style>
+<title>CS112 Spring 2017: Problem Set 12 Solution</title>
+</head><body>
+
+<center>
+<h1>Problem Set 12 - Solution</h1>
+<h2>Graphs: Topological Sorting, Traversal</h2>
+</center>
+
+<hr>
+<ol>
+<li>
+You are given a directed graph:
+<pre>
+   class Neighbor {
+      public int vertex;
+      public Neighbor next;
+      ...
+   }
+
+   class Vertex {
+      String name;
+      Neighbor neighbors; // adjacency linked lists for all vertices
+   }
+ 
+   public class Graph {
+      Vertex[] vertices;
+
+      // returns an array of indegrees of the vertices, i.e. return[i] is the
+      // number of edges that are directed IN TO vertex i
+      public int[] indegrees() {
+        // FILL IN THIS METHOD
+        ...
+      }
+      ...
+   }
+</pre>
+Assuming that the graph has already been read in, 
+complete the <tt>indegrees</tt> method. 
+
+<p><b>SOLUTION</b>
+<pre>
+      public int[] indegrees() {
+         int[] indeg = new int[vertices.length];
+         for (int i=0; i < vertices.length; i++) {
+             for (Neighbor nbr=vertices[i].neighbors; nbr != null; nbr=nbr.next) {
+                 indeg[nbr.vertex]++;   
+             }
+         }
+         return indeg;
+      }
+</pre>
+<hr>
+<li>What is the big O running time of your <tt>indegrees</tt> implementation
+if the graph has <em>n</em> vertices and <em>e</em> edges? Show your analysis.
+
+<p><b>SOLUTION</b>
+
+<ul>
+<li>Accessing the front of a vertex's neighbors list,
+updating the indegree of a vertex, and accessing the neighbor of a
+vertex are each unit time operations.
+<li>There are <em>e</em> neighbors in all, for all vertices put together, so 
+the neighbor access part contributes <em>e</em> units of time. Accessing
+the front of a vertex's neighbors list is done <em>n</em> times in all,
+once per vertex.
+There are <em>e</em> indegree updates, one per edge.
+<li>Total is <em>e</em> + <em>n</em> + <em>e</em> = <em>n</em> + <em>2e</em>,
+which is O(<em>n+e</em>)
+</ul>
+
+<hr>
+
+<li>
+With the same <tt>Graph</tt> class as in the previous example, assuming
+that the graph is acyclic, and that
+that the <tt>indegrees</tt> method has been implemented, 
+implement a <tt>topsort</tt> method 
+to toplogically sort the vertices using <b>using BFS (breadth-first search)</b>
+(see algorithm in Section 14.4.4 of text):
+
+<pre>
+   public class Graph {
+      ...
+      public String[] indegrees() {
+         ... // already implemented
+      }
+
+      // returns an array with the names of vertices in topological sequence
+      public String[] topsort() {
+        // FILL IN THIS METHOD
+        ...
+      }
+      ...
+   }
+</pre>
+
+You may use the following <tt>Queue</tt> class:
+<pre>   
+   public class Queue&lt;T&gt; {
+      ...
+      public Queue() {...}
+      public void enqueue(T item) {...}
+      public T dequeue() throws NoSuchElementException {...}
+      public boolean isEmpty() {...}
+      ...
+   }
+
+</pre>
+
+<p><b>SOLUTION</b>
+
+<pre>
+      // returns an array with the names of vertices in topological sequence
+      public String[] topsort() 
+      throws Exception {
+
+         // compute indegrees        
+         int[] indeg = indegrees();
+
+         int topnum=0;
+         String[] tops = new String[vertices.length];
+         Queue<Integer> queue = new Queue<Integer>();
+
+         // find all vertices with indegree zero, assign them topological numbers, and enqueue
+         for (int i=0; i < indeg.length; i++) { 
+             if (indeg[i] == 0) {
+                tops[topnum++] = vertices[i].name;
+                queue.enqueue(i);
+             }
+         }
+        
+         // loop until queue is empty
+         while (!queue.isEmpty()) {
+             int v = queue.dequeue();
+             for (Neighbor nbr=vertices[v].neighbors; nbr != null; nbr=nbr.next) {
+                 indegrees[nbr.vertex]--;
+                 if (indegrees[nbr] == 0) {
+                    tops[topnum++] = vertices[nbr.vertex].name;
+                    queue.enqueue(nbr.vertex);
+                 }    
+             }
+         }
+         
+         return tops;
+      }
+</pre>
+
+<hr>
+
+<li>An undirected graph has <tt>n</tt> vertices and <tt>e</tt> edges, 
+and is stored in adjacency linked lists. The edges DO NOT have weights. 
+What would be the <em>fastest</em>
+algorithm (in the big O worst case sense)
+to find the shortest path from vertex numbered <tt>x</tt> to 
+vertex numbered <tt>y</tt>, assuming <tt>y</tt> can be reached from <tt>x</tt>?
+Describe the algorithm, and state its big O worst case running time.
+
+<p><b>SOLUTION</b>
+<p>Algo:<br>
+Do a BFS starting at <tt>x</tt>. Set distance of <tt>x</tt> to 0. 
+When an edge <tt>a--b</tt> is seen and <tt>b</tt> is enqueued,
+make distance of <tt>b</tt> equal to distance of <tt>a</tt> plus 1.  
+When <tt>y</tt> is reached, stop. 
+
+<p>Worst case running time is O(<tt>n+e</tt>) since in the worst case, we would need to run
+BFS over the entire graph (i.e. <tt>y</tt> is the last vertex seen), and the running time
+of BFS is O(<tt>n+e</tt>).
+
+<hr>
+<li>A <em>strongly connected</em> directed graph is one in which every vertex can
+reach all other vertices. In the following <tt>Graph</tt> class, implement a method
+<tt>stronglyConnected</tt> that returns true if the graph is strongly connected,
+and false otherwise. What is the worst case big O running time of your implementation?
+
+<pre>
+   public class Graph {
+      Vertex[] vertices;
+
+      // performs a recursive dfs starting at vertex v
+      private void dfs(int v, boolean[] visited) {
+          // already implemented
+        ...
+      }
+
+      public boolean stronglyConnected() {
+          // FILL IN THIS IMPLEMENTATION
+      }
+
+      ...
+   }
+</pre>
+
+<p><b>SOLUTION</b>
+
+<pre>
+      public boolean stronglyConnected() {
+         boolean[] visited = new boolean[vertices.length];
+         for (int i=0; i < vertices.length; i++) {
+             for (int j=0; j < visited.length; j++) {
+                 visited[i] = false;
+             }
+
+             dfs(i, visited);
+
+             for (int j=0; j < visited.length; j++) {
+                 if (!visited[j]) {
+                    return false;
+                 }
+             }
+         }
+         return true;
+      } 
+</pre>
+
+<p>In the worst case, every vertex can reach all other vertices. The dfs method
+is called once for
+each vertex, and the time for a dfs run is O(<em>n+e</em>). So the total time
+is <em>n</em>*O(<em>n+e</em>) = O(<em>n<sup>2</sup>+ne</em>). (Note: since <em>e</em>
+can be anywhere between <em>0</em> and O(<em>n<sup>2</sup></em>), we cannot simplify
+the big O result any further. 
+
+</ol>
+
+</body></html>
